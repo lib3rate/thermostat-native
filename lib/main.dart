@@ -11,7 +11,35 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.cyan,
       ),
-      home: HomePage(title: 'Thermostat Home'),
+      home: LoginPage(),
+      // home: HomePage(title: 'Thermostat Home'),
+    );
+  }
+}
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  void _login() {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (BuildContext context) {
+        return HomePage(title: 'Thermostat Home');
+      },
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Login'),
+      ),
+      body: Center(
+        child: LoginForm(),
+      ),
     );
   }
 }
@@ -153,6 +181,7 @@ class _LoginFormState extends State<LoginForm> {
             onPressed: () {
               // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
+                // _login();
                 // If the form is valid, display a snackbar. In the real world,
                 // you'd often call a server or save the information in a database.
                 ScaffoldMessenger.of(context)
