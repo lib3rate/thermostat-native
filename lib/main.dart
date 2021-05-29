@@ -24,15 +24,22 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: Header(),
-      // appBar: Header(
-      //   title: Text('Login'),
-      // ),
-      body: Center(
-        child: LoginForm(),
+    // return Scaffold(
+    //   appBar: Header(),
+    //   body: Center(
+    //     child: LoginForm(),
+    //   ),
+    // );
+    return Material(
+        child: Column(children: <Widget>[
+      Header(),
+      Expanded(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: LoginForm(),
+        ),
       ),
-    );
+    ]));
   }
 }
 
@@ -139,7 +146,6 @@ class _HomePageState extends State<HomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: Header(),
-      // appBar: Header(title: Text('Thermostat')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -173,26 +179,27 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class Header extends StatelessWidget implements PreferredSizeWidget {
-  // Header({required this.title});
-
-  // final Widget title;
-
-  // void _login() {
-  //   Navigator.of(context).push(MaterialPageRoute<void>(
-  //     builder: (BuildContext context) {
-  //       return HomePage(title: 'Thermostat Home');
-  //     },
-  //   ));
-  // }
-
+class Header extends StatefulWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(100);
 
   @override
+  _HeaderState createState() => _HeaderState();
+}
+
+class _HeaderState extends State<Header> {
+  void _redirect() {
+    Navigator.push(context, MaterialPageRoute<void>(
+      builder: (BuildContext context) {
+        return LoginPage();
+      },
+    ));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-        height: 90.0,
+        height: 80.0,
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         // padding: const EdgeInsets.only(top: 30.0, left: 8.0, right: 8.0),
         decoration: BoxDecoration(color: Colors.white),
@@ -202,7 +209,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: GestureDetector(
-                  onTap: () => print('logo got clicked'),
+                  onTap: _redirect,
                   child: Image.asset('images/logo.png',
                       width: 100.0, height: 35.0),
                 ),
