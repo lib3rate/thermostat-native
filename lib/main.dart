@@ -11,7 +11,98 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.cyan,
       ),
-      home: HomePage(title: 'Thermostat Home'),
+      home: LoginPage(),
+    );
+  }
+}
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  @override
+  Widget build(BuildContext context) {
+    // return Scaffold(
+    //   appBar: Header(),
+    //   body: Center(
+    //     child: LoginForm(),
+    //   ),
+    // );
+    return Material(
+        child: Column(children: <Widget>[
+      Header(),
+      Expanded(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: LoginForm(),
+        ),
+      ),
+    ]));
+  }
+}
+
+class LoginForm extends StatefulWidget {
+  final Function login = () {};
+
+  @override
+  _LoginFormState createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final _formKey = GlobalKey<FormState>();
+
+  void _login() {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (BuildContext context) {
+        return HomePage(title: 'Thermostat Home');
+      },
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      // padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Enter your username'),
+            // The validator receives the text that the user has entered.
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your username';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Enter your password'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              return null;
+            },
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Validate returns true if the form is valid, or false otherwise.
+              if (_formKey.currentState!.validate()) {
+                _login();
+              }
+            },
+            child: Text('Submit'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -45,27 +136,6 @@ class _HomePageState extends State<HomePage> {
     setState(() => _counter--);
   }
 
-  void _login() {
-    Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Login'),
-          ),
-          // body: Center(
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [],
-          //   ),
-          // )
-          body: Center(
-            child: LoginForm(),
-          ),
-        );
-      },
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -75,12 +145,7 @@ class _HomePageState extends State<HomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-        actions: [IconButton(onPressed: _login, icon: Icon(Icons.list))],
-      ),
+      appBar: Header(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -94,6 +159,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: _decreaseDesiredTemperature,
                 tooltip: 'Decrease desired temperature',
                 child: Icon(Icons.remove),
+                heroTag: "decrease temperature button",
               ),
               Text(
                 '$_counter°',
@@ -103,6 +169,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: _increaseDesiredTemperature,
                 tooltip: 'Increase desired temperature',
                 child: Icon(Icons.add),
+                heroTag: "increase temperature button",
               ),
             ]),
           ],
@@ -112,57 +179,51 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class LoginForm extends StatefulWidget {
+class Header extends StatefulWidget implements PreferredSizeWidget {
   @override
-  _LoginFormState createState() => _LoginFormState();
+  Size get preferredSize => const Size.fromHeight(100);
+
+  @override
+  _HeaderState createState() => _HeaderState();
 }
 
-class _LoginFormState extends State<LoginForm> {
-  final _formKey = GlobalKey<FormState>();
+class _HeaderState extends State<Header> {
+  void _redirect() {
+    Navigator.push(context, MaterialPageRoute<void>(
+      builder: (BuildContext context) {
+        return LoginPage();
+      },
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Enter your username'),
-            // The validator receives the text that the user has entered.
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your username';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Enter your password'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your password';
-              }
-              return null;
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Validate returns true if the form is valid, or false otherwise.
-              if (_formKey.currentState!.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('Processing Data')));
-              }
-            },
-            child: Text('Submit'),
-          ),
-        ],
-      ),
-    );
+    return Container(
+        height: 80.0,
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        // padding: const EdgeInsets.only(top: 30.0, left: 8.0, right: 8.0),
+        decoration: BoxDecoration(color: Colors.white),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: GestureDetector(
+                  onTap: _redirect,
+                  child: Image.asset('images/logo.png',
+                      width: 100.0, height: 35.0),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: IconButton(
+                icon: Icon(Icons.menu),
+                tooltip: 'Navigation menu',
+                onPressed: () => print('menu got clicked'),
+              ),
+            ),
+          ],
+        ));
   }
 }
