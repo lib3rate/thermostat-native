@@ -25,9 +25,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(
-        title: Text('Login'),
-      ),
+      appBar: Header(),
+      // appBar: Header(
+      //   title: Text('Login'),
+      // ),
       body: Center(
         child: LoginForm(),
       ),
@@ -137,7 +138,8 @@ class _HomePageState extends State<HomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: Header(title: Text('Thermostat')),
+      appBar: Header(),
+      // appBar: Header(title: Text('Thermostat')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -172,9 +174,9 @@ class _HomePageState extends State<HomePage> {
 }
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
-  Header({required this.title});
+  // Header({required this.title});
 
-  final Widget title;
+  // final Widget title;
 
   // void _login() {
   //   Navigator.of(context).push(MaterialPageRoute<void>(
@@ -190,25 +192,29 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 56.0,
+        height: 90.0,
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        decoration: BoxDecoration(color: Colors.cyan),
+        // padding: const EdgeInsets.only(top: 30.0, left: 8.0, right: 8.0),
+        decoration: BoxDecoration(color: Colors.white),
         child: Row(
           children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.holiday_village),
-              tooltip: 'Logo',
-              onPressed: () => print('logo got clicked'),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: GestureDetector(
+                  onTap: () => print('logo got clicked'),
+                  child: Image.asset('images/logo.png',
+                      width: 100.0, height: 35.0),
+                ),
+              ),
             ),
-            // GestureDetector(
-            //   onTap: () => print('logo got clicked'),
-            //   child: Image.asset('images/flutter.jpeg'),
-            // ),
-            Expanded(child: title),
-            IconButton(
-              icon: Icon(Icons.menu),
-              tooltip: 'Navigation menu',
-              onPressed: () => print('menu got clicked'),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: IconButton(
+                icon: Icon(Icons.menu),
+                tooltip: 'Navigation menu',
+                onPressed: () => print('menu got clicked'),
+              ),
             ),
           ],
         ));
