@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: Header(
         title: Text('Login'),
       ),
       body: Center(
@@ -137,13 +137,7 @@ class _HomePageState extends State<HomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.list))],
-        // actions: [IconButton(onPressed: _login, icon: Icon(Icons.list))],
-      ),
+      appBar: Header(title: Text('Thermostat')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -174,5 +168,49 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+}
+
+class Header extends StatelessWidget implements PreferredSizeWidget {
+  Header({required this.title});
+
+  final Widget title;
+
+  // void _login() {
+  //   Navigator.of(context).push(MaterialPageRoute<void>(
+  //     builder: (BuildContext context) {
+  //       return HomePage(title: 'Thermostat Home');
+  //     },
+  //   ));
+  // }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(100);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        height: 56.0,
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        decoration: BoxDecoration(color: Colors.cyan),
+        child: Row(
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.holiday_village),
+              tooltip: 'Logo',
+              onPressed: () => print('logo got clicked'),
+            ),
+            // GestureDetector(
+            //   onTap: () => print('logo got clicked'),
+            //   child: Image.asset('images/flutter.jpeg'),
+            // ),
+            Expanded(child: title),
+            IconButton(
+              icon: Icon(Icons.menu),
+              tooltip: 'Navigation menu',
+              onPressed: () => print('menu got clicked'),
+            ),
+          ],
+        ));
   }
 }
