@@ -23,22 +23,40 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _counter = 20;
+  int _desiredTemperature = 25;
 
   late Future<TemperatureData> outdoorTemperatureData;
 
   void _increaseDesiredTemperature() {
-    setState(() => _counter++);
+    setState(() => _desiredTemperature++);
   }
 
   void _decreaseDesiredTemperature() {
-    setState(() => _counter--);
+    setState(() => _desiredTemperature--);
   }
 
   @override
   void initState() {
     super.initState();
     outdoorTemperatureData = fetchOutdoorTemperature();
+  }
+
+  Future<TemperatureData> fetchOutdoorTemperature() async {
+    DateTime currentTimestamp = DateTime.now();
+    DateTime previousTimestamp =
+        currentTimestamp.subtract(const Duration(minutes: 17));
+
+    final response = await http.get(Uri.parse(
+        'https://api-staging.paritygo.com/sensors/api/sensors/outdoor-1/?begin=${previousTimestamp}&end=${currentTimestamp}'));
+
+    if (response.statusCode == 200) {
+      var temperature = TemperatureData.fromJson(jsonDecode(response.body))
+          .averageTemperature;
+      setState(() => _desiredTemperature = temperature);
+      return TemperatureData.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load the temperature data');
+    }
   }
 
   @override
@@ -70,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                 future: outdoorTemperatureData,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return Text("${snapshot.data!.averageTemperature}°C",
+                    return Text("${_desiredTemperature}°C",
                         style: Theme.of(context).textTheme.headline4);
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
@@ -89,21 +107,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-}
-
-Future<TemperatureData> fetchOutdoorTemperature() async {
-  DateTime currentTimestamp = DateTime.now();
-  DateTime previousTimestamp =
-      currentTimestamp.subtract(const Duration(minutes: 17));
-
-  final response = await http.get(Uri.parse(
-      'https://api-staging.paritygo.com/sensors/api/sensors/outdoor-1/?begin=${previousTimestamp}&end=${currentTimestamp}'));
-
-  if (response.statusCode == 200) {
-    return TemperatureData.fromJson(jsonDecode(response.body));
-  } else {
-    throw Exception('Failed to load the temperature data');
   }
 }
 
