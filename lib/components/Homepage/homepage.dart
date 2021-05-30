@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import '../Header/index.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,12 +25,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _counter = 20;
 
+  late Future<TemperatureData> outdoorTemperatureData;
+
   void _increaseDesiredTemperature() {
     setState(() => _counter++);
   }
 
   void _decreaseDesiredTemperature() {
     setState(() => _counter--);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    outdoorTemperatureData = fetchOutdoorTemperature();
   }
 
   @override
@@ -55,9 +66,17 @@ class _HomePageState extends State<HomePage> {
                 child: Icon(Icons.remove),
                 heroTag: "decrease temperature button",
               ),
-              Text(
-                '$_counter°',
-                style: Theme.of(context).textTheme.headline4,
+              FutureBuilder<TemperatureData>(
+                future: outdoorTemperatureData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text("${snapshot.data!.averageTemperature}°C",
+                        style: Theme.of(context).textTheme.headline4);
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return CircularProgressIndicator();
+                },
               ),
               FloatingActionButton(
                 onPressed: _increaseDesiredTemperature,
@@ -70,5 +89,70 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+}
+
+Future<TemperatureData> fetchOutdoorTemperature() async {
+  DateTime currentTimestamp = DateTime.now();
+  DateTime previousTimestamp =
+      currentTimestamp.subtract(const Duration(minutes: 17));
+
+  final response = await http.get(Uri.parse(
+      'https://api-staging.paritygo.com/sensors/api/sensors/outdoor-1/?begin=${previousTimestamp}&end=${currentTimestamp}'));
+
+  if (response.statusCode == 200) {
+    return TemperatureData.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception('Failed to load the temperature data');
+  }
+}
+
+class TemperatureData {
+  final String name;
+  final String metric;
+  final List<DataPoint> dataPoints;
+  final int averageTemperature;
+
+  TemperatureData(
+      {required this.name,
+      required this.metric,
+      required this.dataPoints,
+      required this.averageTemperature});
+
+  factory TemperatureData.fromJson(Map<String, dynamic> json) {
+    var dataPointsList = json['data_points'] as List;
+    List<DataPoint> dataPoints =
+        dataPointsList.map((i) => DataPoint.fromJson(i)).toList();
+    var averageTemperature;
+    var sum = 0.000;
+
+    if (dataPoints.length < 3) {
+      averageTemperature = null;
+    } else {
+      for (var i = 0; i < dataPoints.length; i++) {
+        var currentValue = num.parse(dataPoints[i].value);
+        sum = sum + currentValue;
+      }
+      var average = (sum / dataPoints.length);
+      averageTemperature = average.toInt();
+    }
+
+    return TemperatureData(
+      name: json['name'],
+      metric: json['display_symbol'],
+      dataPoints: dataPoints,
+      averageTemperature: averageTemperature,
+    );
+  }
+}
+
+class DataPoint {
+  final String value;
+  final String timestamp;
+
+  DataPoint({required this.value, required this.timestamp});
+
+  factory DataPoint.fromJson(Map<String, dynamic> json) {
+    return DataPoint(value: json['value'], timestamp: json['timestamp']);
   }
 }
