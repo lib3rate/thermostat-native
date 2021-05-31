@@ -74,29 +74,42 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
+              'Outdoor temperature:',
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            FutureBuilder<TemperatureData>(
+              future: outdoorTemperatureData,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text("${snapshot.data!.averageTemperature}°C",
+                      style: Theme.of(context).textTheme.headline4);
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                return CircularProgressIndicator();
+              },
+            ),
+            Text(
               'Desired temperature:',
               style: Theme.of(context).textTheme.headline5,
             ),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               FloatingActionButton(
+                mini: true,
                 onPressed: _decreaseDesiredTemperature,
                 tooltip: 'Decrease desired temperature',
                 child: Icon(Icons.remove),
                 heroTag: "decrease temperature button",
               ),
-              FutureBuilder<TemperatureData>(
-                future: outdoorTemperatureData,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text("${_desiredTemperature}°C",
-                        style: Theme.of(context).textTheme.headline4);
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-                  return CircularProgressIndicator();
-                },
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  "${_desiredTemperature}°C",
+                  style: Theme.of(context).textTheme.headline4,
+                ),
               ),
               FloatingActionButton(
+                mini: true,
                 onPressed: _increaseDesiredTemperature,
                 tooltip: 'Increase desired temperature',
                 child: Icon(Icons.add),
