@@ -32,8 +32,8 @@ class _HeaderState extends State<Header> {
                 alignment: Alignment.bottomLeft,
                 child: GestureDetector(
                   onTap: _redirect,
-                  child: Image.asset('images/logo.png',
-                      width: 100.0, height: 35.0),
+                  child: Image.asset('images/flutter.png',
+                      width: 40.0, height: 40.0),
                 ),
               ),
             ),
