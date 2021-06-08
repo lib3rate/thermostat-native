@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../Header/index.dart';
+import '../Drawer/index.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title}) : super(key: key);
@@ -119,6 +120,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      drawer: DrawerComponent(),
     );
   }
 }
