@@ -12,15 +12,14 @@ class _DrawerState extends State<DrawerComponent> {
   var units = [
     'Unit 100',
     'Unit 200',
+    'Unit 300',
     'Unit 400',
     'Unit 500',
     'Unit 600',
     'Unit 700',
     'Unit 800',
     'Unit 900',
-    'Unit 1000',
-    'Unit 1100',
-    'Unit 1200'
+    'Unit 1000'
   ];
 
   List<Widget> buildUnits() {
@@ -40,13 +39,25 @@ class _DrawerState extends State<DrawerComponent> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
+          Container(
+            height: 100,
+            child: DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.cyan,
               ),
-              child: Text('Building Units (${units.length})')),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Building Units (${units.length})',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ),
           Column(children: buildUnits()),
-          // Column(children: units.map((unit) => ListTile(title: Text(unit))).toList()),
         ],
       ),
     );
