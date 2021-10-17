@@ -72,52 +72,63 @@ class _HomePageState extends State<HomePage> {
       appBar: Header(),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Outdoor temperature:',
-              style: Theme.of(context).textTheme.headline5,
-            ),
-            FutureBuilder<TemperatureData>(
-              future: outdoorTemperatureData,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text("${snapshot.data!.averageTemperature}°C",
-                      style: Theme.of(context).textTheme.headline4);
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-                return CircularProgressIndicator();
-              },
-            ),
-            Text(
-              'Desired temperature:',
-              style: Theme.of(context).textTheme.headline5,
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              FloatingActionButton(
-                mini: true,
-                onPressed: _decreaseDesiredTemperature,
-                tooltip: 'Decrease desired temperature',
-                child: Icon(Icons.remove),
-                heroTag: "decrease temperature button",
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          StoreConnector<int, String>(
+            converter: (store) => store.state.selectedUnit.toString(),
+            builder: (context, selectedUnit) {
+              return Text(
+                'Unit $selectedUnit',
+                style: Theme.of(context).textTheme.headline5,
+              );
+            },
+          ),
+          Column(
+            children: <Widget>[
+              Text(
+                'Outdoor temperature:',
+                style: Theme.of(context).textTheme.headline5,
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  "${_desiredTemperature}°C",
-                  style: Theme.of(context).textTheme.headline4,
+              FutureBuilder<TemperatureData>(
+                future: outdoorTemperatureData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text("${snapshot.data!.averageTemperature}°C",
+                        style: Theme.of(context).textTheme.headline4);
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
+              Text(
+                'Desired temperature:',
+                style: Theme.of(context).textTheme.headline5,
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                FloatingActionButton(
+                  mini: true,
+                  onPressed: _decreaseDesiredTemperature,
+                  tooltip: 'Decrease desired temperature',
+                  child: Icon(Icons.remove),
+                  heroTag: "decrease temperature button",
                 ),
-              ),
-              FloatingActionButton(
-                mini: true,
-                onPressed: _increaseDesiredTemperature,
-                tooltip: 'Increase desired temperature',
-                child: Icon(Icons.add),
-                heroTag: "increase temperature button",
-              ),
-            ]),
-          ],
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    "${_desiredTemperature}°C",
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                ),
+                FloatingActionButton(
+                  mini: true,
+                  onPressed: _increaseDesiredTemperature,
+                  tooltip: 'Increase desired temperature',
+                  child: Icon(Icons.add),
+                  heroTag: "increase temperature button",
+                ),
+              ]),
+            ],
+          )
         ),
       ),
       drawer: DrawerComponent(),
