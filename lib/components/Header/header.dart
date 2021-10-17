@@ -42,7 +42,7 @@ class _HeaderState extends State<Header> {
               child: IconButton(
                 icon: Icon(Icons.menu),
                 tooltip: 'Navigation menu',
-                onPressed: () => print('menu got clicked'),
+                onPressed: () => Scaffold.of(context).openDrawer(),
               ),
             ),
           ],
